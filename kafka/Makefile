@@ -11,10 +11,14 @@ export LDFLAGS=-L$(shell pwd)/vcpkg_installed/x64-linux/lib -lz -lrt -lpthread -
 
 ENVFLAGS=-DENV_PRODUCT
 
-.PHONY: build clean
-build: producer
+.PHONY: build-producer build-consumer clean
+build-producer: producer
 producer: producer.c
 	gcc $(CFLAGS) $< -o $@ $(LDFLAGS) $(ENVFLAGS)
 
+build-consumer: consumer
+consumer: consumer.c
+	gcc $(CFLAGS) $< -o $@ $(LDFLAGS) $(ENVFLAGS)
+
 clean:
-	rm producer
+	rm producer consumer

@@ -40,9 +40,9 @@ static void dr_msg_cb(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void 
 }
 
 int main(int argc, char **argv) {
-    #ifdef ENV_PRODUCT
-    printf("ENV_PRODUCT is defined");
-    #endif
+    // #ifdef ENV_PRODUCT
+    // printf("ENV_PRODUCT is defined");
+    // #endif
 
     rd_kafka_t *rk; // producer instance handle
     rd_kafka_conf_t *conf; // temporary configuration object
@@ -55,6 +55,16 @@ int main(int argc, char **argv) {
 
     // create kafka client configuration place-holder
     conf = rd_kafka_conf_new();
+
+/* Set bootstrap broker(s) as a comma-separated list of
+         * host or host:port (default port 9092).
+         * librdkafka will use the bootstrap brokers to acquire the full
+         * set of brokers from the cluster. */
+        if (rd_kafka_conf_set(conf, "bootstrap.servers", brokers, errstr,
+                              sizeof(errstr)) != RD_KAFKA_CONF_OK) {
+                fprintf(stderr, "%s\n", errstr);
+                return 1;
+        }
 
     // set the delivery report callback
     // this callback will be called once per message to inform the application
