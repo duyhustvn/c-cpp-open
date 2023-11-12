@@ -6,3 +6,5 @@ vcpkg_installed
 # output
 producer
 consumer
+
+*.so
