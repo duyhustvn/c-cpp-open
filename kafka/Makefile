@@ -18,8 +18,11 @@ producer.so: producer.c
 	gcc -fPIC -shared $(CFLAGS) $< -o $@ $(LDFLAGS) $(ENVFLAGS)
 
 build-producer: producer
-producer: producer.c
-	gcc $(CFLAGS) $< -o $@ $(LDFLAGS) $(ENVFLAGS)
+producer: producer_client.c
+	gcc $(CFLAGS) $< -o $@ -L. -l:producer.so
+
+run-producer:
+	export LD_LIBRARY_PATH=$pwd:$LD_LIBRARY_PATH && ./producer
 
 build-consumer: consumer
 consumer: consumer.c

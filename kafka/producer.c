@@ -16,6 +16,10 @@ static void stop(int sig) {
     fclose(stdin); // abort fgets()
 }
 
+static void stats_callback(rd_kafka_t *rk, char *json, size_t json_len, void *opaque) {
+    printf("Statistics: %.*s\n\n\n", (int)json_len, json);
+}
+
 
 /**
  * @brief Message delivery report callback.
@@ -31,12 +35,13 @@ static void stop(int sig) {
 static void dr_msg_cb(rd_kafka_t *rk, const rd_kafka_message_t *rkmessage, void *opaque) {
     if (rkmessage->err) {
         fprintf(stderr, "%% Message delivery failed: %s\n", rd_kafka_err2str(rkmessage->err));
-    } else {
-        fprintf(stderr,
-                        "%% Message delivered (%zd bytes, partition %" PRId32 ")\n",
-                        rkmessage->len, rkmessage->partition);
-        /* The rkmessage is destroyed automatically by librdkafka */
     }
+    // else {
+    //     fprintf(stderr,
+    //                     "%% Message delivered (%zd bytes, partition %" PRId32 ")\n",
+    //                     rkmessage->len, rkmessage->partition);
+    //     /* The rkmessage is destroyed automatically by librdkafka */
+    // }
 }
 
 rd_kafka_t* init_kafka_producer() {
@@ -54,11 +59,27 @@ rd_kafka_t* init_kafka_producer() {
      * librdkafka will use the bootstrap brokers to acquire the full
      * set of brokers from the cluster.
      */
-    if (rd_kafka_conf_set(conf, "bootstrap.servers", brokers, errstr,
+    if (rd_kafka_conf_set(conf, "bootstrap.servers", brokers,  errstr,
                           sizeof(errstr)) != RD_KAFKA_CONF_OK) {
             fprintf(stderr, "%s\n", errstr);
             return NULL;
     }
+
+    // Enable statistic
+    if (rd_kafka_conf_set(conf, "statistics.interval.ms", "5000",  errstr,
+                          sizeof(errstr)) != RD_KAFKA_CONF_OK) {
+            fprintf(stderr, "%s\n", errstr);
+            return NULL;
+    }
+
+    size_t cntp;
+    const char** conf_dump = rd_kafka_conf_dump(conf, &cntp);
+    for (size_t i = 0; i < cntp; i+=2) {
+        printf("%-50s%-30s\n", conf_dump[i], conf_dump[i+1]);
+    }
+
+    rd_kafka_conf_dump_free(conf_dump, cntp);
+
 
     // set the delivery report callback
     // this callback will be called once per message to inform the application
@@ -66,6 +87,8 @@ rd_kafka_t* init_kafka_producer() {
     // See dr_msg_cb() above
     // The callback is only trigger from rd_kafka_pool() and rd_kafka_flush()
     rd_kafka_conf_set_dr_msg_cb(conf, dr_msg_cb);
+
+    rd_kafka_conf_set_stats_cb(conf, stats_callback);
 
     // create producer instance
     // NOTE: rd_kafka_new() takes ownership of the conf object
@@ -136,11 +159,12 @@ retry:
              rd_kafka_poll(rk, 1000 /* block for max 1000ms */);
              goto retry;
          }
-     } else {
-        fprintf(stderr, "%% Enqueued message (%zd bytes)"
-                    "for topic %s\n",
-                    len, topic);
-    }
+     }
+     // else {
+     //    fprintf(stderr, "%% Enqueued message (%zd bytes)"
+     //                "for topic %s\n",
+     //                len, topic);
+     // }
 
     rd_kafka_poll(rk, 0 /*non-blocking*/);
     return 0;
