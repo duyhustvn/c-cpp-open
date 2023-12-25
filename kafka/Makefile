@@ -18,6 +18,9 @@ BUILD_OBJS=$(addprefix $(BUILD_DIR)/, $(OBJS))
 
 SRC_DIR=src
 
+IMG=cpp-consumer
+IMG_TAG=v1
+
 build-consumer: $(BUILD_DIR)/consumer
 $(BUILD_DIR)/consumer: $(SRC_DIR)/cpp/consumer.cpp
 	mkdir -p $(BUILD_DIR)
@@ -25,6 +28,9 @@ $(BUILD_DIR)/consumer: $(SRC_DIR)/cpp/consumer.cpp
 
 run-consumer:
 	KAFKA_BROKERS=172.17.0.1:9092 KAFKA_CONSUMER_GROUP=local KAFKA_STATISTICS_INTERVAL_MS=60000 KAKFA_DO_CONFIG_DUMP=true KAFKA_TOPIC=sample_topic $(BUILD_DIR)/consumer
+
+docker-build:
+	docker build -t $(IMG):$(IMG_TAG) .
 
 clean:
 	rm -r build

@@ -1,37 +1,3 @@
-/*
- * librdkafka - Apache Kafka C library
- *
- * Copyright (c) 2014-2022, Magnus Edenhill
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-/**
- * Apache Kafka consumer & producer example programs
- * using the Kafka driver from librdkafka
- * (https://github.com/confluentinc/librdkafka)
- */
-
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -47,22 +13,7 @@
 #include <windows.h> /* for GetLocalTime */
 #endif
 
-#ifdef _MSC_VER
-#include "../win32/wingetopt.h"
-#elif _AIX
-#include <unistd.h>
-#else
-#include <getopt.h>
-#include <unistd.h>
-#endif
-
 #include "./config.cpp"
-
-/*
- * Typically include path in a real application would be
- * #include <librdkafka/rdkafkacpp.h>
- */
-// #include "rdkafkacpp.h"
 
 #include <librdkafka/rdkafkacpp.h>
 
@@ -71,7 +22,7 @@ static volatile sig_atomic_t run = 1;
 static bool exit_eof             = false;
 static int eof_cnt               = 0;
 static int partition_cnt         = 0;
-static int verbosity             = 1;
+static int verbosity             = 3;
 static long msg_cnt              = 0;
 static int64_t msg_bytes         = 0;
 static void sigterm(int sig) {
