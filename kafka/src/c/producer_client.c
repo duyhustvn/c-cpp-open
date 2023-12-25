@@ -6,7 +6,7 @@
 #ifdef ENV_PRODUCT
 #include <librdkafka/rdkafka.h>
 #else
-#include "vcpkg_installed/x64-linux/include/librdkafka/rdkafka.h"
+#include "../../vcpkg_installed/x64-linux/include/librdkafka/rdkafka.h"
 #endif
 
 #include "producer.c"

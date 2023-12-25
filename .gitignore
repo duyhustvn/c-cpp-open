@@ -4,7 +4,6 @@
 tmp/
 vcpkg_installed
 # output
-producer
-consumer
+build/
 
 *.so
